@@ -31,7 +31,7 @@
         function publishMessage() {
             const messageInput = document.getElementById('message').value;
             if (messageInput) {
-                client.publish('faqih', messageInput); // Menggunakan topik faqih
+                client.publish('faqih', messageInput); // Menggunakan topik "faqih"
                 console.log(`Message sent: ${messageInput}`);
                 document.getElementById('message').value = ''; // Kosongkan input setelah mengirim
             } else {
