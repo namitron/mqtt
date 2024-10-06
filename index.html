@@ -7,19 +7,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
     <script>
         // Inisialisasi koneksi MQTT
-        const client = mqtt.connect('wss://mqtt-dashboard.com:8000/mqtt'); // Ganti dengan URL broker yang sesuai
+        const client = mqtt.connect('wss://broker.mqtt-dashboard.com:8000/mqtt'); // Ganti dengan URL broker yang sesuai
 
         client.on('connect', () => {
             console.log('Connected to broker');
-            client.subscribe('faqih', (err) => {
+            client.subscribe('test/topic', (err) => {
                 if (!err) {
-                    console.log('Subscribed to topic: faqih');
+                    console.log('Subscribed to topic: test/topic');
                 }
             });
         });
 
         client.on('message', (topic, message) => {
-            console.log(`Message received on topic ${topic}: ${message.toString()}`);
+            console.log(`Message received: ${message.toString()}`);
             const messageElement = document.createElement('p');
             messageElement.textContent = `Topic: ${topic} - Message: ${message.toString()}`;
             document.getElementById('messages').appendChild(messageElement);
@@ -27,9 +27,8 @@
 
         function publishMessage() {
             const messageInput = document.getElementById('message').value;
-            client.publish('faqih', messageInput); // Menggunakan topik faqih
+            client.publish('test/topic', messageInput);
             console.log(`Message sent: ${messageInput}`);
-            document.getElementById('message').value = ''; // Kosongkan input setelah mengirim
         }
     </script>
     <style>
