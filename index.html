@@ -21,6 +21,23 @@
             margin-right: auto;
             background-color: white;
         }
+        #status {
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .connected {
+            background-color: #28a745;
+            color: white;
+        }
+        .disconnected {
+            background-color: #dc3545;
+            color: white;
+        }
         input, button {
             padding: 10px;
             margin: 10px;
@@ -29,11 +46,14 @@
 </head>
 <body>
     <h1>MQTT Web Client</h1>
-    
-    <!-- Input Broker URL -->
-    <input id="broker" type="text" placeholder="Broker URL (e.g. ws://broker.hivemq.com:8000/mqtt)" style="width: 300px;">
+
+    <!-- Input untuk URL Broker -->
+    <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. ws://broker.hivemq.com)" style="width: 300px;">
+    <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;">
     <button onclick="connectMQTT()">Connect</button>
-    <br>
+    
+    <!-- Indikator Status Koneksi -->
+    <div id="status" class="disconnected">Disconnected</div>
 
     <!-- Input untuk topik dan pesan -->
     <input id="topic" type="text" placeholder="Topic" style="width: 300px;">
@@ -48,15 +68,34 @@
 
         // Fungsi untuk connect ke broker MQTT
         function connectMQTT() {
-            const brokerUrl = document.getElementById('broker').value;
-            client = mqtt.connect(brokerUrl);
+            const brokerUrl = document.getElementById('brokerUrl').value;
+            const brokerPort = document.getElementById('brokerPort').value;
 
+            // Membentuk URL broker dengan port
+            const fullBrokerUrl = `${brokerUrl}:${brokerPort}/mqtt`;
+
+            // Membuat koneksi ke broker
+            client = mqtt.connect(fullBrokerUrl);
+
+            // Indikator jika berhasil connect
             client.on('connect', () => {
-                document.getElementById('messages').innerHTML += `<p>Connected to broker ${brokerUrl}</p>`;
+                document.getElementById('messages').innerHTML += `<p>Connected to broker ${fullBrokerUrl}</p>`;
+                document.getElementById('status').innerText = 'Connected';
+                document.getElementById('status').className = 'connected';
             });
 
-            client.on('message', (topic, payload) => {
-                document.getElementById('messages').innerHTML += `<p><strong>${topic}:</strong> ${payload.toString()}</p>`;
+            // Indikator jika gagal connect
+            client.on('error', (error) => {
+                document.getElementById('messages').innerHTML += `<p style="color: red;">Failed to connect: ${error.message}</p>`;
+                document.getElementById('status').innerText = 'Disconnected';
+                document.getElementById('status').className = 'disconnected';
+            });
+
+            // Indikator jika disconnect
+            client.on('close', () => {
+                document.getElementById('messages').innerHTML += `<p style="color: red;">Disconnected from broker</p>`;
+                document.getElementById('status').innerText = 'Disconnected';
+                document.getElementById('status').className = 'disconnected';
             });
         }
 
