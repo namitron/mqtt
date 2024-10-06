@@ -52,8 +52,8 @@
 
     <!-- Input untuk URL Broker -->
     <div class="form-group">
-        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. mqtt-dashboard.com)" style="width: 300px;">
-        <input id="brokerPort" type="text" placeholder="Port (e.g. 1883)" style="width: 100px;">
+        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. mqtt-dashboard.com)" style="width: 300px;" value="mqtt-dashboard.com">
+        <input id="brokerPort" type="text" placeholder="Port (e.g. 1883)" style="width: 100px;" value="1883">
         <button onclick="connectMQTT()">Connect</button>
     </div>
     
@@ -62,14 +62,14 @@
 
     <!-- Input untuk topik dan pesan -->
     <div class="form-group">
-        <input id="topic" type="text" placeholder="Topic" style="width: 300px;">
-        <input id="message" type="text" placeholder="Message" style="width: 300px;">
+        <input id="topic" type="text" placeholder="Topic (e.g. test/topic)" style="width: 300px;" value="test/topic">
+        <input id="message" type="text" placeholder="Message (e.g. Hello World)" style="width: 300px;" value="Hello World">
         <button onclick="publishMessage()">Publish</button>
     </div>
 
     <!-- Input untuk subscribe ke topik -->
     <div class="form-group">
-        <input id="subscribeTopic" type="text" placeholder="Subscribe to Topic" style="width: 300px;">
+        <input id="subscribeTopic" type="text" placeholder="Subscribe to Topic (e.g. test/topic)" style="width: 300px;" value="test/topic">
         <button onclick="subscribeTopic()">Subscribe</button>
     </div>
 
