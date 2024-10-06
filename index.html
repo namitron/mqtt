@@ -5,7 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MQTT Web App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
-    <script src="mqtt.js" defer></script>
+    <script>
+        // Inisialisasi koneksi MQTT
+        const client = new Paho.MQTT.Client("broker.hivemq.com", 8000, "clientId-web");
+
+        client.onConnectionLost = function (responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Connection lost: " + responseObject.errorMessage);
+            }
+        };
+
+        client.onMessageArrived = function (message) {
+            const messageElement = document.createElement("p");
+            messageElement.textContent = message.payloadString;
+            document.getElementById("messages").appendChild(messageElement);
+        };
+
+        function connectMQTT() {
+            client.connect({
+                onSuccess: function () {
+                    console.log("Connected");
+                    client.subscribe("test/topic");
+                },
+                onFailure: function (error) {
+                    console.log("Connection failed: " + error.errorMessage);
+                }
+            });
+        }
+
+        function publishMessage() {
+            const messageInput = document.getElementById("message").value;
+            const message = new Paho.MQTT.Message(messageInput);
+            message.destinationName = "test/topic";
+            client.send(message);
+        }
+
+        window.onload = function() {
+            connectMQTT();
+        };
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
