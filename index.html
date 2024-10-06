@@ -53,7 +53,6 @@
     <div class="form-group">
         <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. broker.hivemq.com)" style="width: 300px;" value="broker.hivemq.com">
         <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;" value="8000">
-        <button onclick="connectMQTT()">Connect</button>
     </div>
     
     <div id="status" class="disconnected">Disconnected</div>
@@ -73,17 +72,20 @@
 
     <script>
         let client;
+        let retryInterval;
 
+        // Fungsi untuk connect ke broker MQTT menggunakan WebSocket
         function connectMQTT() {
             const brokerUrl = document.getElementById('brokerUrl').value;
             const brokerPort = document.getElementById('brokerPort').value;
             const fullBrokerUrl = `ws://${brokerUrl}:${brokerPort}`;
 
-            console.log(`Connecting to ${fullBrokerUrl}`); // Tambahkan log
+            console.log(`Connecting to ${fullBrokerUrl}`);
 
             client = mqtt.connect(fullBrokerUrl);
 
             client.on('connect', () => {
+                clearInterval(retryInterval); // Stop retrying if connection is successful
                 document.getElementById('messages').innerHTML += `<p>Connected to broker ${fullBrokerUrl}</p>`;
                 document.getElementById('status').innerText = 'Connected';
                 document.getElementById('status').className = 'connected';
@@ -94,12 +96,14 @@
                 document.getElementById('messages').innerHTML += `<p style="color: red;">Failed to connect: ${error.message}</p>`;
                 document.getElementById('status').innerText = 'Disconnected';
                 document.getElementById('status').className = 'disconnected';
+                retryConnection(); // Attempt to reconnect
             });
 
             client.on('close', () => {
                 document.getElementById('messages').innerHTML += `<p style="color: red;">Disconnected from broker</p>`;
                 document.getElementById('status').innerText = 'Disconnected';
                 document.getElementById('status').className = 'disconnected';
+                retryConnection(); // Attempt to reconnect
             });
 
             client.on('message', (topic, message) => {
@@ -107,6 +111,15 @@
             });
         }
 
+        // Fungsi untuk retry connection
+        function retryConnection() {
+            retryInterval = setInterval(() => {
+                console.log('Retrying connection...');
+                connectMQTT(); // Try to reconnect
+            }, 5000); // Retry every 5 seconds
+        }
+
+        // Fungsi untuk publish pesan ke topik MQTT
         function publishMessage() {
             const topic = document.getElementById('topic').value;
             const message = document.getElementById('message').value;
@@ -119,6 +132,7 @@
             }
         }
 
+        // Fungsi untuk subscribe ke topik tertentu
         function subscribeTopic() {
             const topic = document.getElementById('subscribeTopic').value;
 
@@ -129,6 +143,11 @@
                 alert('Make sure to connect to the broker and fill in the topic.');
             }
         }
+
+        // Auto connect saat halaman dimuat
+        window.onload = function() {
+            connectMQTT();
+        };
     </script>
 </body>
 </html>
