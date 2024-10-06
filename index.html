@@ -6,13 +6,11 @@
     <title>MQTT Web App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
     <script>
-        // Ganti URL broker dengan broker Mosquitto
-        const brokerUrl = 'wss://test.mosquitto.org:8081'; // URL broker Mosquitto untuk WebSocket
-        const client = mqtt.connect(brokerUrl);
+        // Inisialisasi koneksi MQTT
+        const client = mqtt.connect('wss://broker.hivemq.com:8000/mqtt'); // Ganti dengan URL broker yang sesuai
 
         client.on('connect', () => {
             console.log('Connected to broker');
-            // Subscribe to the "faqih" topic
             client.subscribe('faqih', (err) => {
                 if (!err) {
                     console.log('Subscribed to topic: faqih');
