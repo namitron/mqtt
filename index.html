@@ -50,74 +50,63 @@
 <body>
     <h1>Advanced MQTT Web Client</h1>
 
-    <!-- Input untuk URL Broker -->
     <div class="form-group">
-        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. mqtt-dashboard.com)" style="width: 300px;" value="broker.hivemq.com">
+        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. broker.hivemq.com)" style="width: 300px;" value="broker.hivemq.com">
         <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;" value="8000">
         <button onclick="connectMQTT()">Connect</button>
     </div>
     
-    <!-- Indikator Status Koneksi -->
     <div id="status" class="disconnected">Disconnected</div>
 
-    <!-- Input untuk topik dan pesan -->
     <div class="form-group">
         <input id="topic" type="text" placeholder="Topic (e.g. test/topic)" style="width: 300px;" value="test/topic">
         <input id="message" type="text" placeholder="Message (e.g. Hello World)" style="width: 300px;" value="Hello World">
         <button onclick="publishMessage()">Publish</button>
     </div>
 
-    <!-- Input untuk subscribe ke topik -->
     <div class="form-group">
         <input id="subscribeTopic" type="text" placeholder="Subscribe to Topic (e.g. test/topic)" style="width: 300px;" value="test/topic">
         <button onclick="subscribeTopic()">Subscribe</button>
     </div>
 
-    <!-- Area untuk menampilkan pesan -->
     <div id="messages"></div>
 
     <script>
         let client;
 
-        // Fungsi untuk connect ke broker MQTT menggunakan WebSocket
         function connectMQTT() {
             const brokerUrl = document.getElementById('brokerUrl').value;
             const brokerPort = document.getElementById('brokerPort').value;
+            const fullBrokerUrl = `ws://${brokerUrl}:${brokerPort}`;
 
-            // Membentuk URL broker WebSocket
-            const fullBrokerUrl = `ws://${brokerUrl}:${brokerPort}`; // Menggunakan ws://
+            console.log(`Connecting to ${fullBrokerUrl}`); // Tambahkan log
 
-            // Membuat koneksi ke broker
             client = mqtt.connect(fullBrokerUrl);
 
-            // Indikator jika berhasil connect
             client.on('connect', () => {
                 document.getElementById('messages').innerHTML += `<p>Connected to broker ${fullBrokerUrl}</p>`;
                 document.getElementById('status').innerText = 'Connected';
                 document.getElementById('status').className = 'connected';
             });
 
-            // Indikator jika gagal connect
             client.on('error', (error) => {
+                console.error('Connection error:', error);
                 document.getElementById('messages').innerHTML += `<p style="color: red;">Failed to connect: ${error.message}</p>`;
                 document.getElementById('status').innerText = 'Disconnected';
                 document.getElementById('status').className = 'disconnected';
             });
 
-            // Indikator jika disconnect
             client.on('close', () => {
                 document.getElementById('messages').innerHTML += `<p style="color: red;">Disconnected from broker</p>`;
                 document.getElementById('status').innerText = 'Disconnected';
                 document.getElementById('status').className = 'disconnected';
             });
 
-            // Menerima pesan dari broker
             client.on('message', (topic, message) => {
                 document.getElementById('messages').innerHTML += `<p><strong>${topic}:</strong> ${message.toString()}</p>`;
             });
         }
 
-        // Fungsi untuk publish pesan ke topik MQTT
         function publishMessage() {
             const topic = document.getElementById('topic').value;
             const message = document.getElementById('message').value;
@@ -130,7 +119,6 @@
             }
         }
 
-        // Fungsi untuk subscribe ke topik tertentu
         function subscribeTopic() {
             const topic = document.getElementById('subscribeTopic').value;
 
