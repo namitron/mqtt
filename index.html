@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MQTT Web Client</title>
+    <title>Advanced MQTT Web Client</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         body {
@@ -42,23 +42,36 @@
             padding: 10px;
             margin: 10px;
         }
+        .form-group {
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
-    <h1>MQTT Web Client</h1>
+    <h1>Advanced MQTT Web Client</h1>
 
     <!-- Input untuk URL Broker -->
-    <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. ws://broker.hivemq.com)" style="width: 300px;">
-    <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;">
-    <button onclick="connectMQTT()">Connect</button>
+    <div class="form-group">
+        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. ws://broker.hivemq.com)" style="width: 300px;">
+        <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;">
+        <button onclick="connectMQTT()">Connect</button>
+    </div>
     
     <!-- Indikator Status Koneksi -->
     <div id="status" class="disconnected">Disconnected</div>
 
     <!-- Input untuk topik dan pesan -->
-    <input id="topic" type="text" placeholder="Topic" style="width: 300px;">
-    <input id="message" type="text" placeholder="Message" style="width: 300px;">
-    <button onclick="publishMessage()">Publish</button>
+    <div class="form-group">
+        <input id="topic" type="text" placeholder="Topic" style="width: 300px;">
+        <input id="message" type="text" placeholder="Message" style="width: 300px;">
+        <button onclick="publishMessage()">Publish</button>
+    </div>
+
+    <!-- Input untuk subscribe ke topik -->
+    <div class="form-group">
+        <input id="subscribeTopic" type="text" placeholder="Subscribe to Topic" style="width: 300px;">
+        <button onclick="subscribeTopic()">Subscribe</button>
+    </div>
 
     <!-- Area untuk menampilkan pesan -->
     <div id="messages"></div>
@@ -97,6 +110,11 @@
                 document.getElementById('status').innerText = 'Disconnected';
                 document.getElementById('status').className = 'disconnected';
             });
+
+            // Menerima pesan dari broker
+            client.on('message', (topic, message) => {
+                document.getElementById('messages').innerHTML += `<p><strong>${topic}:</strong> ${message.toString()}</p>`;
+            });
         }
 
         // Fungsi untuk publish pesan ke topik MQTT
@@ -109,6 +127,18 @@
                 document.getElementById('messages').innerHTML += `<p>Published: <strong>${message}</strong> to <strong>${topic}</strong></p>`;
             } else {
                 alert('Make sure to connect to the broker, and fill in both the topic and message fields.');
+            }
+        }
+
+        // Fungsi untuk subscribe ke topik tertentu
+        function subscribeTopic() {
+            const topic = document.getElementById('subscribeTopic').value;
+
+            if (client && topic) {
+                client.subscribe(topic);
+                document.getElementById('messages').innerHTML += `<p>Subscribed to topic: <strong>${topic}</strong></p>`;
+            } else {
+                alert('Make sure to connect to the broker and fill in the topic.');
             }
         }
     </script>
