@@ -3,78 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MQTT Web App</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
-    <script>
-        // Inisialisasi koneksi MQTT
-        const client = mqtt.connect('wss://mqtt-dashboard.com:8884/mqtt'); // URL broker MQTT Dashboard
-
-        client.on('connect', () => {
-            console.log('Connected to broker');
-            // Subscribe ke topik "faqih" saat terhubung
-            client.subscribe('faqih', (err) => {
-                if (!err) {
-                    console.log('Subscribed to topic: faqih');
-                } else {
-                    console.error('Subscription error:', err);
-                }
-            });
-        });
-
-        client.on('message', (topic, message) => {
-            console.log(`Message received on topic ${topic}: ${message.toString()}`);
-            const messageElement = document.createElement('p');
-            messageElement.textContent = `Topic: ${topic} - Message: ${message.toString()}`;
-            document.getElementById('messages').appendChild(messageElement);
-        });
-
-        function publishMessage() {
-            const messageInput = document.getElementById('message').value;
-            const topicInput = document.getElementById('publishTopic').value || 'faqih'; // Default topic adalah "faqih"
-            if (messageInput) {
-                client.publish(topicInput, messageInput); // Menggunakan topik yang ditentukan
-                console.log(`Message sent: ${messageInput}`);
-                document.getElementById('message').value = ''; // Kosongkan input setelah mengirim
-            } else {
-                console.log('Input message is empty.');
-            }
-        }
-
-        client.on('error', (error) => {
-            console.error('Connection error:', error);
-        });
-    </script>
+    <title>MQTT Web Client</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background-color: #f5f5f5;
             text-align: center;
+            padding: 50px;
         }
         #messages {
+            margin-top: 20px;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 10px;
-            max-height: 200px;
-            overflow-y: scroll;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: white;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>MQTT Web App</h1>
+    <h1>MQTT Web Client</h1>
+    
+    <!-- Input Broker URL -->
+    <input id="broker" type="text" placeholder="Broker URL (e.g. ws://broker.hivemq.com:8000/mqtt)" style="width: 300px;">
+    <button onclick="connectMQTT()">Connect</button>
+    <br>
 
-    <div>
-        <h3>Subscribe to Topic</h3>
-        <input type="text" id="subscribeTopic" placeholder="Enter topic to subscribe" value="faqih">
-        <button onclick="subscribeToTopic()">Subscribe</button>
-    </div>
+    <!-- Input untuk topik dan pesan -->
+    <input id="topic" type="text" placeholder="Topic" style="width: 300px;">
+    <input id="message" type="text" placeholder="Message" style="width: 300px;">
+    <button onclick="publishMessage()">Publish</button>
 
-    <div>
-        <h3>Publish Message</h3>
-        <input type="text" id="publishTopic" placeholder="Enter topic to publish" value="faqih">
-        <input type="text" id="message" placeholder="Enter message">
-        <button onclick="publishMessage()">Publish</button>
-    </div>
-
+    <!-- Area untuk menampilkan pesan -->
     <div id="messages"></div>
+
+    <script>
+        let client;
+
+        // Fungsi untuk connect ke broker MQTT
+        function connectMQTT() {
+            const brokerUrl = document.getElementById('broker').value;
+            client = mqtt.connect(brokerUrl);
+
+            client.on('connect', () => {
+                document.getElementById('messages').innerHTML += `<p>Connected to broker ${brokerUrl}</p>`;
+            });
+
+            client.on('message', (topic, payload) => {
+                document.getElementById('messages').innerHTML += `<p><strong>${topic}:</strong> ${payload.toString()}</p>`;
+            });
+        }
+
+        // Fungsi untuk publish pesan ke topik MQTT
+        function publishMessage() {
+            const topic = document.getElementById('topic').value;
+            const message = document.getElementById('message').value;
+
+            if (client && topic && message) {
+                client.publish(topic, message);
+                document.getElementById('messages').innerHTML += `<p>Published: <strong>${message}</strong> to <strong>${topic}</strong></p>`;
+            } else {
+                alert('Make sure to connect to the broker, and fill in both the topic and message fields.');
+            }
+        }
+    </script>
 </body>
 </html>
