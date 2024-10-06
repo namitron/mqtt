@@ -1,0 +1,30 @@
+!DOCTYPE html
+html lang=en
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleMQTT Web Apptitle
+    script src=httpscdnjs.cloudflare.comajaxlibspaho-mqtt1.1.0mqttws31.jsscript
+    script src=mqtt.js deferscript
+    style
+        body {
+            font-family Arial, sans-serif;
+            margin 20px;
+            text-align center;
+        }
+        #messages {
+            border 1px solid #ccc;
+            padding 10px;
+            margin-top 10px;
+            max-height 200px;
+            overflow-y scroll;
+        }
+    style
+head
+body
+    h1MQTT Web Apph1
+    input type=text id=message placeholder=Enter message
+    button onclick=publishMessage()Publishbutton
+    div id=messagesdiv
+body
+html
