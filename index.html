@@ -12,7 +12,13 @@
         client.on('connect', () => {
             console.log('Connected to broker');
             // Subscribe ke topik "faqih" saat terhubung
-            subscribeToTopic(); // Subscribe ke topik "faqih"
+            client.subscribe('faqih', (err) => {
+                if (!err) {
+                    console.log('Subscribed to topic: faqih');
+                } else {
+                    console.error('Subscription error:', err);
+                }
+            });
         });
 
         client.on('message', (topic, message) => {
@@ -21,17 +27,6 @@
             messageElement.textContent = `Topic: ${topic} - Message: ${message.toString()}`;
             document.getElementById('messages').appendChild(messageElement);
         });
-
-        function subscribeToTopic() {
-            const topicInput = document.getElementById('subscribeTopic').value || 'faqih'; // Default topik adalah "faqih"
-            client.subscribe(topicInput, (err) => {
-                if (!err) {
-                    console.log(`Subscribed to topic: ${topicInput}`);
-                } else {
-                    console.error('Subscription error:', err);
-                }
-            });
-        }
 
         function publishMessage() {
             const messageInput = document.getElementById('message').value;
