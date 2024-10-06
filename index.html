@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
     <script>
         // Inisialisasi koneksi MQTT
-        const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt'); // URL broker HiveMQ
+        const client = mqtt.connect('wss://mqtt-dashboard.com:8884/mqtt'); // URL broker HiveMQ
 
         client.on('connect', () => {
             console.log('Connected to broker');
