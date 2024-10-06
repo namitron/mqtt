@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
     <script>
         // Inisialisasi koneksi MQTT
-        const client = mqtt.connect('wss://broker.mqtt-dashboard.com:8000/mqtt');
+        const client = mqtt.connect('wss://mqtt-dashboard.com:8000/mqtt'); // Pastikan URL broker benar
 
         client.on('connect', () => {
             console.log('Connected to broker');
@@ -15,6 +15,8 @@
             client.subscribe('faqih', (err) => {
                 if (!err) {
                     console.log('Subscribed to topic: faqih');
+                } else {
+                    console.error('Subscription error:', err);
                 }
             });
         });
@@ -36,6 +38,10 @@
                 console.log('Input message is empty.');
             }
         }
+
+        client.on('error', (error) => {
+            console.error('Connection error:', error);
+        });
     </script>
     <style>
         body {
