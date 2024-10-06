@@ -11,6 +11,14 @@
 
         client.on('connect', () => {
             console.log('Connected to broker');
+            // Subscribe ke topik "faqih" saat terhubung
+            client.subscribe('faqih', (err) => {
+                if (!err) {
+                    console.log('Subscribed to topic: faqih');
+                } else {
+                    console.error('Subscription error:', err);
+                }
+            });
         });
 
         client.on('message', (topic, message) => {
@@ -20,20 +28,9 @@
             document.getElementById('messages').appendChild(messageElement);
         });
 
-        function subscribeToTopic() {
-            const topicInput = document.getElementById('subscribeTopic').value;
-            client.subscribe(topicInput, (err) => {
-                if (!err) {
-                    console.log(`Subscribed to topic: ${topicInput}`);
-                } else {
-                    console.error('Subscription error:', err);
-                }
-            });
-        }
-
         function publishMessage() {
             const messageInput = document.getElementById('message').value;
-            const topicInput = document.getElementById('publishTopic').value;
+            const topicInput = document.getElementById('publishTopic').value || 'faqih'; // Default topic adalah "faqih"
             if (messageInput) {
                 client.publish(topicInput, messageInput); // Menggunakan topik yang ditentukan
                 console.log(`Message sent: ${messageInput}`);
@@ -67,13 +64,13 @@
 
     <div>
         <h3>Subscribe to Topic</h3>
-        <input type="text" id="subscribeTopic" placeholder="Enter topic to subscribe">
+        <input type="text" id="subscribeTopic" placeholder="Enter topic to subscribe" value="faqih">
         <button onclick="subscribeToTopic()">Subscribe</button>
     </div>
 
     <div>
         <h3>Publish Message</h3>
-        <input type="text" id="publishTopic" placeholder="Enter topic to publish">
+        <input type="text" id="publishTopic" placeholder="Enter topic to publish" value="faqih">
         <input type="text" id="message" placeholder="Enter message">
         <button onclick="publishMessage()">Publish</button>
     </div>
