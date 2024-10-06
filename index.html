@@ -6,8 +6,13 @@
     <title>MQTT Web App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/mqttws31.js"></script>
     <script>
-        // Inisialisasi koneksi MQTT menggunakan WebSocket
-        const client = mqtt.connect('wss://mqtt-dashboard.com:8000/mqtt'); // URL broker untuk koneksi WebSocket
+        // Ganti URL broker dengan yang didapat dari CloudMQTT
+        const brokerUrl = 'wss://m11.cloudmqtt.com:8080/mqtt'; // Ganti dengan URL broker yang sesuai
+        const client = mqtt.connect(brokerUrl, {
+            clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8), // ID unik untuk client
+            username: 'YOUR_USERNAME', // Ganti dengan username yang sesuai
+            password: 'YOUR_PASSWORD'  // Ganti dengan password yang sesuai
+        });
 
         client.on('connect', () => {
             console.log('Connected to broker');
@@ -31,7 +36,7 @@
         function publishMessage() {
             const messageInput = document.getElementById('message').value;
             if (messageInput) {
-                client.publish('faqih', messageInput); // Menggunakan topik "faqih"
+                client.publish('faqih', messageInput); // Menggunakan topik faqih
                 console.log(`Message sent: ${messageInput}`);
                 document.getElementById('message').value = ''; // Kosongkan input setelah mengirim
             } else {
