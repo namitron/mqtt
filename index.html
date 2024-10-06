@@ -52,8 +52,8 @@
 
     <!-- Input untuk URL Broker -->
     <div class="form-group">
-        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. mqtt-dashboard.com)" style="width: 300px;" value="mqtt-dashboard.com">
-        <input id="brokerPort" type="text" placeholder="Port (e.g. 1883)" style="width: 100px;" value="1883">
+        <input id="brokerUrl" type="text" placeholder="Broker URL (e.g. mqtt-dashboard.com)" style="width: 300px;" value="broker.hivemq.com">
+        <input id="brokerPort" type="text" placeholder="Port (e.g. 8000)" style="width: 100px;" value="8000">
         <button onclick="connectMQTT()">Connect</button>
     </div>
     
@@ -79,13 +79,13 @@
     <script>
         let client;
 
-        // Fungsi untuk connect ke broker MQTT
+        // Fungsi untuk connect ke broker MQTT menggunakan WebSocket
         function connectMQTT() {
             const brokerUrl = document.getElementById('brokerUrl').value;
             const brokerPort = document.getElementById('brokerPort').value;
 
-            // Membentuk URL broker dengan port
-            const fullBrokerUrl = `mqtt://${brokerUrl}:${brokerPort}`; // Menggunakan mqtt://
+            // Membentuk URL broker WebSocket
+            const fullBrokerUrl = `ws://${brokerUrl}:${brokerPort}`; // Menggunakan ws://
 
             // Membuat koneksi ke broker
             client = mqtt.connect(fullBrokerUrl);
